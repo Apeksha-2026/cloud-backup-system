@@ -1,0 +1,24 @@
+# Windows system files
+Thumbs.db
+Desktop.ini
+
+# Java compilation files
+*.class
+*.log
+target/
+
+# IDE environments (Eclipse, IntelliJ, NetBeans)
+.idea/
+*.iml
+out/
+.classpath
+.project
+.settings/
+bin/
+
+# Cloud Credentials & Secret Tokens (CRUCIAL)
+*.json
+*.pem
+*.env
+.aws/
+secrets/
