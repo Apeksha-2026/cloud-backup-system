@@ -174,15 +174,45 @@
                 </div>
 
 
-                <div class="stat-card">
+                //Adding storage limit
+<div class="stat-card storage-stat-card">
 
-                    <span>Storage Used</span>
+    <div class="stat-title-row">
 
-                    <strong id="storageUsed">
-                        0 MB
-                    </strong>
+        <span>Storage Used</span>
 
-                </div>
+        <span id="storageLimitText">
+            5 GB Limit
+        </span>
+
+    </div>
+
+    <strong id="storageUsed">
+        0 KB
+    </strong>
+
+    <div class="storage-progress">
+
+        <div
+            id="storageProgress"
+            class="storage-progress-bar"
+        ></div>
+
+    </div>
+
+    <div class="storage-details">
+
+        <span id="storageAvailable">
+            5 GB available
+        </span>
+
+        <span id="storagePercentage">
+            0%
+        </span>
+
+    </div>
+
+</div>
 
 
                 <div class="stat-card">

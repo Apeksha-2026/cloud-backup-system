@@ -21,6 +21,8 @@
    DATA
 ========================================================= */
 
+const STORAGE_LIMIT_BYTES = 5 * 1024 * 1024 * 1024;
+
 let backups = JSON.parse(localStorage.getItem("backupHistory")) || [];
 
 let automaticSettings = JSON.parse(
@@ -461,12 +463,19 @@ function renderBackupHistory(filteredBackups = backups) {
 
                 <td>
 
-                    <button
-                        class="action-button"
-                        onclick="requestRestore(${backup.id})"
-                    >
-                        Restore
-                    </button>
+               <button
+    class="action-button"
+    onclick="requestRestore(${backup.id})"
+>
+    Restore
+</button>
+
+<button
+    class="remove-button"
+    onclick="removeBackup(${backup.id})"
+>
+    Remove
+</button>
 
                 </td>
 
@@ -529,24 +538,106 @@ function updateDashboard() {
 
   const last = document.getElementById("lastBackup");
 
+  const storageProgress = document.getElementById("storageProgress");
+
+  const storageAvailable = document.getElementById("storageAvailable");
+
+  const storagePercentage = document.getElementById("storagePercentage");
+
+  /* -------------------------
+       Total backups
+    ------------------------- */
+
   total.textContent = backups.length;
+
+  /* -------------------------
+       Files backed up
+       (currently one record = one file)
+    ------------------------- */
 
   files.textContent = backups.length;
 
-  //Fixing the error of MB:
+  /* -------------------------
+       Calculate total storage
+    ------------------------- */
+
   let totalBytes = 0;
 
   backups.forEach((backup) => {
     totalBytes += parseFileSize(backup.size);
   });
 
+  /* -------------------------
+       Display used storage
+    ------------------------- */
+
   storage.textContent = formatFileSize(totalBytes);
+
+  /* -------------------------
+       Storage percentage
+    ------------------------- */
+
+  const percentage = (totalBytes / STORAGE_LIMIT_BYTES) * 100;
+
+  const safePercentage = Math.min(percentage, 100);
+
+  storageProgress.style.width = safePercentage + "%";
+
+  storagePercentage.textContent =
+    percentage < 0.01 ? "0%" : percentage.toFixed(2) + "%";
+
+  /* -------------------------
+       Available storage
+    ------------------------- */
+
+  const availableBytes = Math.max(STORAGE_LIMIT_BYTES - totalBytes, 0);
+
+  storageAvailable.textContent = formatFileSize(availableBytes) + " available";
+
+  /* -------------------------
+       Last backup
+    ------------------------- */
 
   last.textContent = backups.length > 0 ? backups[0].date : "None";
 
   renderRecentActivity();
 
   updateAutomaticStatus();
+}
+
+/*==============================Add the Remove function==================================*/
+
+function removeBackup(id) {
+  const backup = backups.find((item) => item.id === id);
+
+  if (!backup) {
+    return;
+  }
+
+  const confirmed = confirm(`Remove "${backup.name}" from your backups?`);
+
+  if (!confirmed) {
+    return;
+  }
+
+  backups = backups.filter((item) => item.id !== id);
+
+  saveBackupHistory();
+
+  renderBackupHistory();
+
+  updateDashboard();
+
+  showToast(`${backup.name} was removed from your backups.`);
+
+  /*
+       Later, Phase 3 will replace this frontend
+       operation with:
+
+       DELETE /api/backup/{id}
+
+       so the actual cloud file is also removed.
+    */
 }
 
 /* =========================================================
