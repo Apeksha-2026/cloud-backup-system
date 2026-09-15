@@ -860,3 +860,78 @@ td {
     width: 100%;
   }
 }
+
+/*for the storage display*/
+
+/* ================= STORAGE QUOTA ================= */
+
+.stat-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.stat-title-row span:last-child {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.storage-progress {
+  width: 100%;
+  height: 7px;
+
+  background: #e5e7eb;
+
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  margin-top: 14px;
+}
+
+.storage-progress-bar {
+  height: 100%;
+  width: 0%;
+
+  background: #2474ed;
+
+  border-radius: 10px;
+
+  transition: width 0.3s ease;
+}
+
+.storage-details {
+  display: flex;
+  justify-content: space-between;
+
+  margin-top: 8px;
+
+  font-size: 11px;
+
+  color: #64748b;
+}
+
+/* for remove button*/
+
+.remove-button {
+  border: none;
+
+  background: #fee2e2;
+
+  color: #991b1b;
+
+  padding: 7px 10px;
+
+  border-radius: 5px;
+
+  cursor: pointer;
+
+  margin-left: 6px;
+
+  font-weight: 600;
+}
+
+.remove-button:hover {
+  background: #fecaca;
+}
