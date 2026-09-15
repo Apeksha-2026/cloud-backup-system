@@ -533,17 +533,14 @@ function updateDashboard() {
 
   files.textContent = backups.length;
 
-  let totalMB = 0;
+  //Fixing the error of MB:
+  let totalBytes = 0;
 
   backups.forEach((backup) => {
-    const size = parseFloat(backup.size);
-
-    if (!isNaN(size)) {
-      totalMB += size;
-    }
+    totalBytes += parseFileSize(backup.size);
   });
 
-  storage.textContent = totalMB.toFixed(1) + " MB";
+  storage.textContent = formatFileSize(totalBytes);
 
   last.textContent = backups.length > 0 ? backups[0].date : "None";
 
@@ -685,6 +682,37 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+//fixing error of MB:
+
+function parseFileSize(sizeString) {
+  const parts = sizeString.trim().split(" ");
+
+  const value = parseFloat(parts[0]);
+
+  const unit = parts[1]?.toUpperCase();
+
+  if (isNaN(value)) {
+    return 0;
+  }
+
+  switch (unit) {
+    case "B":
+      return value;
+
+    case "KB":
+      return value * 1024;
+
+    case "MB":
+      return value * 1024 * 1024;
+
+    case "GB":
+      return value * 1024 * 1024 * 1024;
+
+    default:
+      return 0;
+  }
 }
 
 /* =========================================================
