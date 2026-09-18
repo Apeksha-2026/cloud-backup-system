@@ -126,6 +126,7 @@ function openSection(sectionName) {
 /* =========================================================
    MANUAL FILE SELECTION
 ========================================================= */
+
 /* =========================================================
    FILE / FOLDER SELECTION
 ========================================================= */
@@ -202,6 +203,68 @@ folderInput.addEventListener("change", function () {
 });
 
 /* =========================================================
+   MANUAL BACKUP
+========================================================= */
+
+manualBackupButton.addEventListener("click", function () {
+  if (selectedFiles.length === 0) {
+    showToast("Please select a file or folder first.");
+
+    return;
+  }
+
+  let addedCount = 0;
+
+  selectedFiles.forEach((file) => {
+    const newBackup = {
+      id: Date.now() + Math.random(),
+
+      name: file.name,
+
+      relativePath: file.webkitRelativePath || file.name,
+
+      size: formatFileSize(file.size),
+
+      sizeBytes: file.size,
+
+      date: getCurrentDateTime(),
+
+      type: "Manual",
+
+      status: "Backed Up",
+    };
+
+    backups.unshift(newBackup);
+
+    addedCount++;
+  });
+
+  saveBackupHistory();
+
+  renderBackupHistory();
+
+  updateDashboard();
+
+  if (addedCount === 1) {
+    showToast(`${selectedFiles[0].name} backed up successfully.`);
+  } else {
+    showToast(`${addedCount} files backed up successfully.`);
+  }
+
+  // Clear selection
+
+  selectedFiles = [];
+
+  selectedSelectionType = null;
+
+  fileInput.value = "";
+
+  folderInput.value = "";
+
+  selectedItem.textContent = "Nothing selected";
+});
+
+/* =========================================================
    BACKUP MODE TABS
 ========================================================= */
 
@@ -259,27 +322,65 @@ function loadAutomaticSettings() {
   subfolders.checked = automaticSettings.subfolders;
 }
 
-function selectAutomaticFolder() {
-  /*
-       Browser security does not allow JavaScript
-       to read an arbitrary computer folder path.
+function chooseSettingsFolder() {
+  const picker = document.getElementById("settingsFolderPicker");
 
-       During Phase 3, the Java backend will handle
-       the real folder monitoring.
-
-       For Phase 2 we let the user enter/display
-       the intended folder through the settings page.
-    */
-
-  const folder = prompt(
-    "Enter the folder path to monitor:",
-    automaticSettings.folder,
-  );
-
-  if (folder !== null) {
-    backupFolder.value = folder;
-  }
+  picker.click();
 }
+
+function chooseAutomaticFolder() {
+  const picker = document.getElementById("automaticFolderPicker");
+
+  picker.click();
+}
+
+/* -------------------------
+   Settings folder selected
+------------------------- */
+
+document
+  .getElementById("settingsFolderPicker")
+  .addEventListener("change", function () {
+    if (!this.files.length) {
+      return;
+    }
+
+    const firstFile = this.files[0];
+
+    let folderName = "Selected folder";
+
+    if (firstFile.webkitRelativePath) {
+      folderName = firstFile.webkitRelativePath.split("/")[0];
+    }
+
+    document.getElementById("settingsFolder").value = folderName;
+
+    showToast(`Folder selected: ${folderName}`);
+  });
+
+/* -------------------------
+   Automatic Backup folder
+------------------------- */
+
+document
+  .getElementById("automaticFolderPicker")
+  .addEventListener("change", function () {
+    if (!this.files.length) {
+      return;
+    }
+
+    const firstFile = this.files[0];
+
+    let folderName = "Selected folder";
+
+    if (firstFile.webkitRelativePath) {
+      folderName = firstFile.webkitRelativePath.split("/")[0];
+    }
+
+    document.getElementById("backupFolder").value = folderName;
+
+    showToast(`Folder selected: ${folderName}`);
+  });
 
 function saveAutomaticSettings() {
   automaticSettings = {
@@ -325,17 +426,6 @@ function loadSettingsPage() {
   settingsModified.checked = automaticSettings.modifiedFiles;
 
   settingsSubfolders.checked = automaticSettings.subfolders;
-}
-
-function selectSettingsFolder() {
-  const folder = prompt(
-    "Enter the folder that contains your important files:",
-    automaticSettings.folder,
-  );
-
-  if (folder !== null) {
-    settingsFolder.value = folder;
-  }
 }
 
 function saveSettingsPage() {

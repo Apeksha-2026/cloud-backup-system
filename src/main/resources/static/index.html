@@ -517,24 +517,30 @@
                                 Backup Folder
                             </span>
 
-                            <div class="folder-path">
+                           <div class="folder-path">
 
-                                <input
-                                    type="text"
-                                    id="backupFolder"
-                                    placeholder="Select a folder"
-                                    readonly
-                                >
+                            <input
+                                type="text"
+                                id="backupFolder"
+                                placeholder="Select a folder"
+                            >
 
-                                <button
-                                    class="secondary-button"
-                                    onclick="selectAutomaticFolder()"
-                                >
-                                    Browse
-                                </button>
+                            <input
+                                type="file"
+                                id="automaticFolderPicker"
+                                webkitdirectory
+                                directory
+                                hidden
+                            >
 
-                            </div>
+                            <button
+                                class="secondary-button"
+                                onclick="chooseAutomaticFolder()"
+                            >
+                                📁 Browse
+                            </button>
 
+                        </div>
                         </div>
 
 
@@ -816,16 +822,23 @@
                         <input
                             type="text"
                             id="settingsFolder"
-                            placeholder="Example: Documents/College"
-                            readonly
+                             placeholder="Example: C:\Users\DELL\Documents\College"
                         >
 
-                        <button
-                            class="secondary-button"
-                            onclick="selectSettingsFolder()"
+                        <input
+                            type="file"
+                            id="settingsFolderPicker"
+                            webkitdirectory
+                            directory
+                            hidden
                         >
-                            Browse
-                        </button>
+
+                    <button
+                        class="secondary-button"
+                        onclick="chooseSettingsFolder()"
+                    >
+                        📁 Browse
+                    </button>
 
                     </div>
 
