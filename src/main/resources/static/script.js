@@ -474,7 +474,7 @@ function renderBackupHistory(filteredBackups = backups) {
     class="remove-button"
     onclick="removeBackup(${backup.id})"
 >
-    Remove
+    Delete
 </button>
 
                 </td>
