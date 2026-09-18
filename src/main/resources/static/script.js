@@ -21,6 +21,9 @@
    DATA
 ========================================================= */
 
+let selectedFiles = [];
+let selectedSelectionType = null;
+
 const STORAGE_LIMIT_BYTES = 5 * 1024 * 1024 * 1024;
 
 let backups = JSON.parse(localStorage.getItem("backupHistory")) || [];
@@ -123,6 +126,9 @@ function openSection(sectionName) {
 /* =========================================================
    MANUAL FILE SELECTION
 ========================================================= */
+/* =========================================================
+   FILE / FOLDER SELECTION
+========================================================= */
 
 const fileInput = document.getElementById("fileInput");
 
@@ -138,6 +144,10 @@ function selectFolder() {
   folderInput.click();
 }
 
+/* -------------------------
+   Single file selected
+------------------------- */
+
 fileInput.addEventListener("change", function () {
   if (!fileInput.files.length) {
     return;
@@ -145,69 +155,50 @@ fileInput.addEventListener("change", function () {
 
   const file = fileInput.files[0];
 
+  // Clear folder selection
+  folderInput.value = "";
+
+  selectedFiles = [file];
+  selectedSelectionType = "Manual";
+
   selectedItem.textContent = `Selected file: ${file.name} (${formatFileSize(file.size)})`;
 });
+
+/* -------------------------
+   Folder selected
+------------------------- */
 
 folderInput.addEventListener("change", function () {
   if (!folderInput.files.length) {
     return;
   }
 
-  const files = Array.from(folderInput.files);
+  // Store ALL files
+  selectedFiles = Array.from(folderInput.files);
 
-  selectedItem.textContent = `Selected folder containing ${files.length} file(s).`;
-});
+  selectedSelectionType = "Manual";
 
-/* =========================================================
-   MANUAL BACKUP
-========================================================= */
+  const fileCount = selectedFiles.length;
 
-const manualBackupButton = document.getElementById("manualBackupButton");
+  const firstFile = selectedFiles[0];
 
-manualBackupButton.addEventListener("click", function () {
-  if (fileInput.files.length === 0 && folderInput.files.length === 0) {
-    showToast("Please select a file or folder first.");
+  /*
+           webkitRelativePath looks like:
 
-    return;
+           static/index.html
+
+           So we can get:
+
+           static
+        */
+
+  let folderName = "Selected folder";
+
+  if (firstFile.webkitRelativePath) {
+    folderName = firstFile.webkitRelativePath.split("/")[0];
   }
 
-  let file;
-
-  if (fileInput.files.length > 0) {
-    file = fileInput.files[0];
-  } else {
-    file = folderInput.files[0];
-  }
-
-  const newBackup = {
-    id: Date.now(),
-
-    name: file.name,
-
-    size: formatFileSize(file.size),
-
-    date: getCurrentDateTime(),
-
-    type: "Manual",
-
-    status: "Backed Up",
-  };
-
-  backups.unshift(newBackup);
-
-  saveBackupHistory();
-
-  renderBackupHistory();
-
-  updateDashboard();
-
-  showToast(`${file.name} backed up successfully.`);
-
-  fileInput.value = "";
-
-  folderInput.value = "";
-
-  selectedItem.textContent = "Nothing selected";
+  selectedItem.textContent = `Selected folder: ${folderName} (${fileCount} file(s))`;
 });
 
 /* =========================================================
