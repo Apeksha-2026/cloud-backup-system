@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Cloud Backup System</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                ☁
+            </div>
+
+            <div>
+                <h2>Cloud Backup</h2>
+                <span>Backup & Restore</span>
+            </div>
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <button
+                class="nav-button active"
+                data-section="dashboard"
+            >
+                🏠 Dashboard
+            </button>
+
+            <button
+                class="nav-button"
+                data-section="backup"
+            >
+                ☁ Backup
+            </button>
+
+            <button
+                class="nav-button"
+                data-section="restore"
+            >
+                ↻ Restore
+            </button>
+
+            <button
+                class="nav-button"
+                data-section="history"
+            >
+                🕘 Backup History
+            </button>
+
+            <button
+                class="nav-button"
+                data-section="settings"
+            >
+                ⚙ Settings
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-user">
+
+            <div class="avatar">
+                U
+            </div>
+
+            <div>
+                <strong>User</strong>
+                <small>user@example.com</small>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ================= MAIN AREA ================= -->
+
+    <main class="main-content">
+
+
+        <!-- ================= HEADER ================= -->
+
+        <header class="top-header">
+
+            <div>
+
+                <h1 id="pageTitle">
+                    Dashboard
+                </h1>
+
+                <p id="pageSubtitle">
+                    Manage your cloud backups and restore files when required.
+                </p>
+
+            </div>
+
+            <div class="header-actions">
+
+                <span class="notification">
+                    🔔
+                </span>
+
+                <span class="profile">
+                    👤
+                </span>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <section
+            id="dashboard"
+            class="page-section active-section"
+        >
+
+            <div class="welcome-card">
+
+                <div>
+
+                    <h2>Welcome, User!</h2>
+
+                    <p>
+                        Keep your important files safe in the cloud.
+                    </p>
+
+                </div>
+
+                <div class="cloud-large">
+                    ☁
+                </div>
+
+            </div>
+
+
+
+            <!-- Statistics -->
+
+            <div class="statistics-grid">
+
+                <div class="stat-card">
+
+                    <span>Total Backups</span>
+
+                    <strong id="totalBackups">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <!-- Adding storage limit -->
+                 
+<div class="stat-card storage-stat-card">
+
+    <div class="stat-title-row">
+
+        <span>Storage Used</span>
+
+        <span id="storageLimitText">
+            5 GB Limit
+        </span>
+
+    </div>
+
+    <strong id="storageUsed">
+        0 KB
+    </strong>
+
+    <div class="storage-progress">
+
+        <div
+            id="storageProgress"
+            class="storage-progress-bar"
+        ></div>
+
+    </div>
+
+    <div class="storage-details">
+
+        <span id="storageAvailable">
+            5 GB available
+        </span>
+
+        <span id="storagePercentage">
+            0%
+        </span>
+
+    </div>
+
+</div>
+
+
+                <div class="stat-card">
+
+                    <span>Files Backed Up</span>
+
+                    <strong id="filesBackedUp">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Last Backup</span>
+
+                    <strong id="lastBackup">
+                        None
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Automatic Backup -->
+
+            <div class="dashboard-grid">
+
+                <div class="dashboard-card automatic-card">
+
+                    <div class="card-heading">
+
+                        <h2>Automatic Backup</h2>
+
+                        <span
+                            id="autoStatusBadge"
+                            class="status-badge active"
+                        >
+                            ON
+                        </span>
+
+                    </div>
+
+
+                    <div class="automatic-content">
+
+                        <div class="auto-icon">
+                            🔄
+                        </div>
+
+                        <div>
+
+                            <h3 id="autoStatusText">
+                                Automatic backup is enabled
+                            </h3>
+
+                            <p>
+                                Your selected files/folders will be
+                                backed up according to your schedule.
+                            </p>
+
+                            <p class="next-backup">
+                                Next backup:
+                                <strong id="nextBackup">
+                                    1 hour
+                                </strong>
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        class="secondary-button"
+                        onclick="openSection('settings')"
+                    >
+                        Manage Automatic Backup
+                    </button>
+
+                </div>
+
+
+
+                <!-- Quick Actions -->
+
+                <div class="dashboard-card">
+
+                    <div class="card-heading">
+
+                        <h2>Quick Actions</h2>
+
+                    </div>
+
+                    <div class="quick-actions">
+
+                        <button
+                            class="primary-button"
+                            onclick="openSection('backup')"
+                        >
+                            ☁ Backup Now
+                        </button>
+
+                        <button
+                            class="secondary-button"
+                            onclick="openSection('settings')"
+                        >
+                            ⚙ Backup Settings
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Recent Activity -->
+
+            <div class="dashboard-card">
+
+                <div class="card-heading">
+
+                    <h2>Recent Activity</h2>
+
+                </div>
+
+                <div id="recentActivity">
+
+                    <div class="empty-state">
+                        No backup activity yet.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= BACKUP ================= -->
+
+        <section
+            id="backup"
+            class="page-section"
+        >
+
+            <div class="page-card">
+
+                <div class="backup-tabs">
+
+                    <button
+                        class="backup-tab active"
+                        onclick="switchBackupMode('manual')"
+                    >
+                        Manual Backup
+                    </button>
+
+                    <button
+                        class="backup-tab"
+                        onclick="switchBackupMode('automatic')"
+                    >
+                        Automatic Backup
+                    </button>
+
+                </div>
+
+
+
+                <!-- Manual Backup -->
+
+                <div
+                    id="manualBackup"
+                    class="backup-mode active-mode"
+                >
+
+                    <h2>Manual Backup</h2>
+
+                    <p class="section-description">
+                        Select a file or folder and back it up immediately.
+                    </p>
+
+
+                    <div class="upload-box">
+
+                        <div class="upload-icon">
+                            ☁
+                        </div>
+
+                        <h3>
+                            Select a file or folder to backup
+                        </h3>
+
+                        <p>
+                            Choose a file from your computer
+                            or select a folder.
+                        </p>
+
+
+                        <div class="selection-buttons">
+
+                            <input
+                                type="file"
+                                id="fileInput"
+                                hidden
+                            >
+
+                            <input
+                                type="file"
+                                id="folderInput"
+                                webkitdirectory
+                                directory
+                                hidden
+                            >
+
+
+                            <button
+                                class="primary-button"
+                                onclick="selectFile()"
+                            >
+                                Choose File.
+                            </button>
+
+
+                            <button
+                                class="secondary-button"
+                                onclick="selectFolder()"
+                            >
+                                Choose Folder
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            id="selectedItem"
+                            class="selected-item"
+                        >
+                            Nothing selected
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        id="manualBackupButton"
+                        class="primary-button large-button"
+                    >
+                        ☁ Start Backup
+                    </button>
+
+                </div>
+
+
+
+                <!-- Automatic Backup -->
+
+                <div
+                    id="automaticBackup"
+                    class="backup-mode"
+                >
+
+                    <h2>Automatic Backup</h2>
+
+                    <p class="section-description">
+                        Configure folders that should be backed up automatically.
+                    </p>
+
+
+                    <div class="automatic-info">
+
+                        <div class="info-row">
+
+                            <span>
+                                Automatic Backup
+                            </span>
+
+                            <label class="switch">
+
+                                <input
+                                    type="checkbox"
+                                    id="backupToggle"
+                                    checked
+                                >
+
+                                <span class="slider"></span>
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <span>
+                                Backup Folder
+                            </span>
+
+                           <div class="folder-path">
+
+                            <input
+                                type="text"
+                                id="backupFolder"
+                                placeholder="Select a folder"
+                            >
+
+                            <input
+                                type="file"
+                                id="automaticFolderPicker"
+                                webkitdirectory
+                                directory
+                                hidden
+                            >
+
+                            <button
+                                class="secondary-button"
+                                onclick="chooseAutomaticFolder()"
+                            >
+                                📁 Browse
+                            </button>
+
+                        </div>
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <span>
+                                Backup Frequency
+                            </span>
+
+                            <select id="backupFrequency">
+
+                                <option value="1">
+                                    Every 1 minute
+                                </option>
+
+                                <option value="30">
+                                    Every 30 minutes
+                                </option>
+
+                                <option value="60" selected>
+                                    Every 1 hour
+                                </option>
+
+                                <option value="360">
+                                    Every 6 hours
+                                </option>
+
+                                <option value="1440">
+                                    Once a day
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <span>
+                                Backup Modified Files
+                            </span>
+
+                            <label class="checkbox-label">
+
+                                <input
+                                    type="checkbox"
+                                    id="modifiedFiles"
+                                    checked
+                                >
+
+                                Yes
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="info-row">
+
+                            <span>
+                                Include Subfolders
+                            </span>
+
+                            <label class="checkbox-label">
+
+                                <input
+                                    type="checkbox"
+                                    id="subfolders"
+                                    checked
+                                >
+
+                                Yes
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        class="primary-button large-button"
+                        onclick="saveAutomaticSettings()"
+                    >
+                        Save Automatic Backup Settings
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= RESTORE ================= -->
+
+        <section
+            id="restore"
+            class="page-section"
+        >
+
+            <div class="page-card restore-placeholder">
+
+                <div class="restore-icon">
+                    ↻
+                </div>
+
+                <h2>Restore Files</h2>
+
+                <p>
+                    Select a backup and restore it when required.
+                </p>
+
+                <p class="development-note">
+                    Restore functionality is being developed
+                    in the backend.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= HISTORY ================= -->
+
+        <section
+            id="history"
+            class="page-section"
+        >
+
+            <div class="page-card">
+
+                <div class="history-header">
+
+                    <div>
+
+                        <h2>Backup History</h2>
+
+                        <p>
+                            View and manage your previous backups.
+                        </p>
+
+                    </div>
+
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="🔍 Search files..."
+                    >
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                        <tr>
+
+                            <th>File Name</th>
+                            <th>Size</th>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Action</th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody id="backupTable">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= SETTINGS ================= -->
+
+        <section
+            id="settings"
+            class="page-section"
+        >
+
+            <div class="page-card">
+
+                <div class="settings-tabs">
+
+                    <button class="settings-tab active">
+                        General
+                    </button>
+
+                    <button class="settings-tab">
+                        Automatic Backup
+                    </button>
+
+                    <button class="settings-tab">
+                        Cloud Storage
+                    </button>
+
+                    <button class="settings-tab">
+                        Notifications
+                    </button>
+
+                </div>
+
+
+
+                <h2>Automatic Backup Settings</h2>
+
+                <p class="section-description">
+                    Choose which important files should be backed up
+                    automatically and how often the system should check them.
+                </p>
+
+
+
+                <!-- Enable Automatic Backup -->
+
+                <div class="settings-group">
+
+                    <div class="setting-heading">
+
+                        <div>
+
+                            <h3>
+                                Enable Automatic Backup
+                            </h3>
+
+                            <p>
+                                Automatically upload selected files
+                                to cloud storage.
+                            </p>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="settingsAutoToggle"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Backup Folder -->
+
+                <div class="settings-group">
+
+                    <label>
+                        Important Files / Folder
+                    </label>
+
+                    <div class="folder-path">
+
+                        <input
+                            type="text"
+                            id="settingsFolder"
+                             placeholder="Example: C:\Users\DELL\Documents\College"
+                        >
+
+                        <input
+                            type="file"
+                            id="settingsFolderPicker"
+                            webkitdirectory
+                            directory
+                            hidden
+                        >
+
+                    <button
+                        class="secondary-button"
+                        onclick="chooseSettingsFolder()"
+                    >
+                        📁 Browse
+                    </button>
+
+                    </div>
+
+                    <small>
+                        This folder will be monitored for new or modified files.
+                    </small>
+
+                </div>
+
+
+
+                <!-- Frequency -->
+
+                <div class="settings-group">
+
+                    <label>
+                        Backup Frequency
+                    </label>
+
+                    <select id="settingsFrequency">
+
+                        <option value="1">
+                            Every 1 minute
+                        </option>
+
+                        <option value="30">
+                            Every 30 minutes
+                        </option>
+
+                        <option value="60" selected>
+                            Every 1 hour
+                        </option>
+
+                        <option value="360">
+                            Every 6 hours
+                        </option>
+
+                        <option value="1440">
+                            Once a day
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- File Types -->
+
+                <div class="settings-group">
+
+                    <label>
+                        File Types
+                    </label>
+
+                    <select id="fileTypes">
+
+                        <option value="all">
+                            All Files
+                        </option>
+
+                        <option value="documents">
+                            Documents
+                        </option>
+
+                        <option value="images">
+                            Images
+                        </option>
+
+                        <option value="custom">
+                            Custom File Types
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- Options -->
+
+                <div class="settings-group">
+
+                    <label class="checkbox-label">
+
+                        <input
+                            type="checkbox"
+                            id="settingsSubfolders"
+                            checked
+                        >
+
+                        Include subfolders
+
+                    </label>
+
+
+                    <label class="checkbox-label">
+
+                        <input
+                            type="checkbox"
+                            id="settingsModified"
+                            checked
+                        >
+
+                        Automatically backup modified files
+
+                    </label>
+
+                </div>
+
+
+
+                <!-- Schedule Information -->
+
+                <div class="schedule-card">
+
+                    <h3>
+                        Automatic Backup Schedule
+                    </h3>
+
+                    <div class="schedule-row">
+
+                        <span>
+                            Current Status
+                        </span>
+
+                        <strong id="settingsStatus">
+                            Active
+                        </strong>
+
+                    </div>
+
+
+                    <div class="schedule-row">
+
+                        <span>
+                            Last Automatic Backup
+                        </span>
+
+                        <strong id="settingsLastBackup">
+                            None
+                        </strong>
+
+                    </div>
+
+
+                    <div class="schedule-row">
+
+                        <span>
+                            Next Automatic Backup
+                        </span>
+
+                        <strong id="settingsNextBackup">
+                            1 hour
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="primary-button"
+                    onclick="saveSettingsPage()"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+<!-- Status notification -->
+
+<div
+    id="toast"
+    class="toast"
+>
+    Message
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
