@@ -14,44 +14,16 @@ public class BackupController {
 
     private final BackupService backupService;
 
-
-    public BackupController(
-            BackupService backupService
-    ) {
-
-        this.backupService =
-                backupService;
-
+    public BackupController(BackupService backupService) {
+        this.backupService = backupService;
     }
 
-
     @PostMapping("/backup")
-    public ResponseEntity<?> backupFile(
-            @RequestParam("file")
-            MultipartFile file
+    public ResponseEntity<?> backupFiles(
+            @RequestParam("files") MultipartFile[] files
     ) {
 
-        try {
-
-            String location =
-                    backupService.backupFile(
-                            file
-                    );
-
-
-            return ResponseEntity.ok(
-                    Map.of(
-                            "success", true,
-                            "message",
-                            "File backed up successfully.",
-                            "fileName",
-                            file.getOriginalFilename(),
-                            "location",
-                            location
-                    )
-            );
-
-        } catch (IllegalArgumentException e) {
+        if (files == null || files.length == 0) {
 
             return ResponseEntity
                     .badRequest()
@@ -59,11 +31,30 @@ public class BackupController {
                             Map.of(
                                     "success", false,
                                     "message",
-                                    e.getMessage()
+                                    "Please select at least one file."
                             )
                     );
+        }
+
+        try {
+
+            int uploadedCount =
+                    backupService.backupFiles(files);
+
+            return ResponseEntity.ok(
+                    Map.of(
+                            "success", true,
+                            "message",
+                            uploadedCount +
+                                    " file(s) backed up successfully.",
+                            "fileCount",
+                            uploadedCount
+                    )
+            );
 
         } catch (Exception e) {
+
+            e.printStackTrace();
 
             return ResponseEntity
                     .internalServerError()
@@ -71,10 +62,10 @@ public class BackupController {
                             Map.of(
                                     "success", false,
                                     "message",
-                                    "Backup failed."
+                                    "Backup failed: " +
+                                            e.getMessage()
                             )
                     );
-
         }
     }
 }
