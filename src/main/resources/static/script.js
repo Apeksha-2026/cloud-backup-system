@@ -31,15 +31,11 @@ let backups = JSON.parse(localStorage.getItem("backupHistory")) || [];
 let automaticSettings = JSON.parse(
   localStorage.getItem("automaticSettings"),
 ) || {
-  enabled: true,
-
-  folder: "",
-
-  frequency: 60,
-
-  modifiedFiles: true,
-
-  subfolders: true,
+  enabled: false,
+  folderPath: "",
+  frequencyMinutes: 60,
+  backupModifiedFiles: true,
+  includeSubfolders: true,
 };
 
 /* =========================================================
@@ -136,6 +132,8 @@ const fileInput = document.getElementById("fileInput");
 const folderInput = document.getElementById("folderInput");
 
 const selectedItem = document.getElementById("selectedItem");
+
+const manualBackupButton = document.getElementById("manualBackupButton");
 
 function selectFile() {
   fileInput.click();
@@ -349,13 +347,13 @@ const subfolders = document.getElementById("subfolders");
 function loadAutomaticSettings() {
   backupToggle.checked = automaticSettings.enabled;
 
-  backupFolder.value = automaticSettings.folder;
+  backupFolder.value = automaticSettings.folderPath || "";
 
-  backupFrequency.value = automaticSettings.frequency;
+  backupFrequency.value = automaticSettings.frequencyMinutes || 60;
 
-  modifiedFiles.checked = automaticSettings.modifiedFiles;
+  modifiedFiles.checked = automaticSettings.backupModifiedFiles;
 
-  subfolders.checked = automaticSettings.subfolders;
+  subfolders.checked = automaticSettings.includeSubfolders;
 }
 
 function chooseSettingsFolder() {
@@ -418,24 +416,61 @@ document
     showToast(`Folder selected: ${folderName}`);
   });
 
-function saveAutomaticSettings() {
-  automaticSettings = {
+async function saveAutomaticSettings() {
+  const settings = {
     enabled: backupToggle.checked,
 
-    folder: backupFolder.value,
+    folderPath: backupFolder.value.trim(),
 
-    frequency: Number(backupFrequency.value),
+    frequencyMinutes: Number(backupFrequency.value),
 
-    modifiedFiles: modifiedFiles.checked,
+    backupModifiedFiles: modifiedFiles.checked,
 
-    subfolders: subfolders.checked,
+    includeSubfolders: subfolders.checked,
   };
 
-  saveAutomaticSettingsToStorage();
+  if (settings.enabled && settings.folderPath === "") {
+    showToast("Please enter the full folder path.");
 
-  updateAutomaticStatus();
+    return;
+  }
 
-  showToast("Automatic backup settings saved.");
+  try {
+    const response = await fetch("/api/settings/automatic-backup", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(settings),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.message || "Unable to save automatic backup settings.",
+      );
+    }
+
+    automaticSettings = result;
+
+    localStorage.setItem(
+      "automaticSettings",
+      JSON.stringify(automaticSettings),
+    );
+
+    loadAutomaticSettings();
+
+    updateAutomaticStatus();
+
+    showToast("Automatic backup settings saved successfully.");
+  } catch (error) {
+    console.error("Automatic backup settings error:", error);
+
+    showToast(error.message || "Unable to save automatic backup settings.");
+  }
 }
 
 /* =========================================================
@@ -455,37 +490,69 @@ const settingsSubfolders = document.getElementById("settingsSubfolders");
 function loadSettingsPage() {
   settingsAutoToggle.checked = automaticSettings.enabled;
 
-  settingsFolder.value = automaticSettings.folder;
+  settingsFolder.value = automaticSettings.folderPath || "";
 
-  settingsFrequency.value = automaticSettings.frequency;
+  settingsFrequency.value = automaticSettings.frequencyMinutes || 60;
 
-  settingsModified.checked = automaticSettings.modifiedFiles;
+  settingsModified.checked = automaticSettings.backupModifiedFiles;
 
-  settingsSubfolders.checked = automaticSettings.subfolders;
+  settingsSubfolders.checked = automaticSettings.includeSubfolders;
 }
 
-function saveSettingsPage() {
-  automaticSettings = {
+async function saveSettingsPage() {
+  const settings = {
     enabled: settingsAutoToggle.checked,
 
-    folder: settingsFolder.value,
+    folderPath: settingsFolder.value.trim(),
 
-    frequency: Number(settingsFrequency.value),
+    frequencyMinutes: Number(settingsFrequency.value),
 
-    modifiedFiles: settingsModified.checked,
+    backupModifiedFiles: settingsModified.checked,
 
-    subfolders: settingsSubfolders.checked,
+    includeSubfolders: settingsSubfolders.checked,
   };
 
-  saveAutomaticSettingsToStorage();
+  if (settings.enabled && settings.folderPath === "") {
+    showToast("Please enter the full folder path.");
 
-  loadAutomaticSettings();
+    return;
+  }
 
-  updateAutomaticStatus();
+  try {
+    const response = await fetch("/api/settings/automatic-backup", {
+      method: "POST",
 
-  showToast("Settings saved successfully.");
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(settings),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || "Unable to save settings.");
+    }
+
+    automaticSettings = result;
+
+    localStorage.setItem(
+      "automaticSettings",
+      JSON.stringify(automaticSettings),
+    );
+
+    loadSettingsPage();
+
+    updateAutomaticStatus();
+
+    showToast("Automatic backup settings saved successfully.");
+  } catch (error) {
+    console.error("Settings save error:", error);
+
+    showToast(error.message || "Unable to save settings.");
+  }
 }
-
 /* =========================================================
    AUTOMATIC STATUS
 ========================================================= */
@@ -508,7 +575,7 @@ function updateAutomaticStatus() {
 
     statusText.textContent = "Automatic backup is enabled";
 
-    const frequencyText = getFrequencyText(automaticSettings.frequency);
+    const frequencyText = getFrequencyText(automaticSettings.frequencyMinutes);
 
     nextBackup.textContent = frequencyText;
 
