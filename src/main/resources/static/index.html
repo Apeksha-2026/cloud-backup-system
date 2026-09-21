@@ -517,30 +517,32 @@
                                 Backup Folder
                             </span>
 
+                          
                            <div class="folder-path">
 
-                            <input
-                                type="text"
-                                id="backupFolder"
-                                placeholder="Select a folder"
-                            >
+                                <input
+                                    type="text"
+                                    id="backupFolder"
+                                    placeholder="Select a folder"
+                                    readonly
+                                >
 
-                            <input
-                                type="file"
-                                id="automaticFolderPicker"
-                                webkitdirectory
-                                directory
-                                hidden
-                            >
+                                <input
+                                    type="file"
+                                    id="automaticFolderPicker"
+                                    webkitdirectory
+                                    directory
+                                    hidden
+                                >
 
-                            <button
-                                class="secondary-button"
-                                onclick="chooseAutomaticFolder()"
-                            >
-                                📁 Browse
-                            </button>
+                                <button
+                                    class="secondary-button"
+                                    onclick="chooseAutomaticFolder()"
+                                >
+                                    📁 Browse
+                                </button>
 
-                        </div>
+                            </div>
                         </div>
 
 
@@ -817,31 +819,31 @@
                         Important Files / Folder
                     </label>
 
-                    <div class="folder-path">
+                       
+                        <div class="folder-path">
 
-                        <input
-                            type="text"
-                            id="settingsFolder"
-                             placeholder="Example: C:\Users\DELL\Documents\College"
-                        >
+                            <input
+                                type="text"
+                                id="settingsFolder"
+                                placeholder="C:\Users\DELL\Desktop\BackupTest"
+                            >
 
-                        <input
-                            type="file"
-                            id="settingsFolderPicker"
-                            webkitdirectory
-                            directory
-                            hidden
-                        >
+                            <input
+                                type="file"
+                                id="settingsFolderPicker"
+                                webkitdirectory
+                                directory
+                                hidden
+                            >
 
-                    <button
-                        class="secondary-button"
-                        onclick="chooseSettingsFolder()"
-                    >
-                        📁 Browse
-                    </button>
+                            <button
+                                class="secondary-button"
+                                onclick="chooseSettingsFolder()"
+                            >
+                                📁 Browse
+                            </button>
 
-                    </div>
-
+                        </div>
                     <small>
                         This folder will be monitored for new or modified files.
                     </small>

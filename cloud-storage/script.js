@@ -534,6 +534,38 @@ function updateAutomaticStatus() {
    BACKUP HISTORY
 ========================================================= */
 
+async function loadAutomaticBackupHistory() {
+  try {
+    const response = await fetch("/api/automatic-backup-history");
+
+    if (!response.ok) {
+      throw new Error("Unable to load automatic backup history.");
+    }
+
+    const automaticBackups = await response.json();
+
+    automaticBackups.forEach((backup) => {
+      const alreadyExists = backups.some(
+        (existingBackup) => existingBackup.id === backup.id,
+      );
+
+      if (!alreadyExists) {
+        backups.unshift(backup);
+      }
+    });
+
+    saveBackupHistory();
+
+    renderBackupHistory();
+
+    updateDashboard();
+
+    console.log("Automatic backup history loaded:", automaticBackups);
+  } catch (error) {
+    console.error("Automatic backup history error:", error);
+  }
+}
+
 function renderBackupHistory(filteredBackups = backups) {
   const table = document.getElementById("backupTable");
 
@@ -934,3 +966,5 @@ loadSettingsPage();
 renderBackupHistory();
 
 updateDashboard();
+
+loadAutomaticBackupHistory();

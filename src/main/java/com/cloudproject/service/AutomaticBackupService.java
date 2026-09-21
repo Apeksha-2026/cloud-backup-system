@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
 
 @Service
@@ -23,6 +27,11 @@ public class AutomaticBackupService {
     */
     private final Map<String, Long> backedUpFiles =
             new HashMap<>();
+
+            /* Stores automatic backup history temporarily.
+   Later this will be replaced by the database. */
+private final List<Map<String, Object>> automaticBackupHistory =
+        new ArrayList<>();
 
 
     public AutomaticBackupService(
@@ -177,16 +186,42 @@ public class AutomaticBackupService {
                             previousModifiedTime;
 
 
-            if (isNew) {
+          if (isNew) {
 
-                backupService.backupLocalFile(
-                        file
+                     backupService.backupLocalFile(
+                     file
                 );
 
                 backedUpFiles.put(
                         key,
                         modifiedTime
                 );
+
+                Map<String, Object> historyItem = new HashMap<>();
+
+                historyItem.put("id", System.currentTimeMillis());
+
+                historyItem.put("name", file.getFileName().toString());
+
+                historyItem.put(
+                        "size",
+                        Files.size(file) + " B"
+                );
+
+                historyItem.put(
+                        "date",
+                        LocalDateTime.now().format(
+                                DateTimeFormatter.ofPattern(
+                                        "dd MMM yyyy, hh:mm a"
+                                )
+                        )
+                );
+
+                historyItem.put("type", "Automatic");
+
+                historyItem.put("status", "Backed Up");
+
+                automaticBackupHistory.add(historyItem);
 
                 System.out.println(
                         "Automatically backed up: "
@@ -203,19 +238,45 @@ public class AutomaticBackupService {
                     isModified
             ) {
 
-                backupService.backupLocalFile(
-                        file
-                );
+              backupService.backupLocalFile(
+        file
+);
 
-                backedUpFiles.put(
-                        key,
-                        modifiedTime
-                );
+backedUpFiles.put(
+        key,
+        modifiedTime
+);
 
-                System.out.println(
-                        "Automatically backed up modified file: "
-                                + file
-                );
+Map<String, Object> historyItem = new HashMap<>();
+
+historyItem.put("id", System.currentTimeMillis());
+
+historyItem.put("name", file.getFileName().toString());
+
+historyItem.put(
+        "size",
+        Files.size(file) + " B"
+);
+
+historyItem.put(
+        "date",
+        LocalDateTime.now().format(
+                DateTimeFormatter.ofPattern(
+                        "dd MMM yyyy, hh:mm a"
+                )
+        )
+);
+
+historyItem.put("type", "Automatic");
+
+historyItem.put("status", "Backed Up");
+
+automaticBackupHistory.add(historyItem);
+
+System.out.println(
+        "Automatically backed up modified file: "
+                + file
+);
 
             }
 
@@ -231,4 +292,8 @@ public class AutomaticBackupService {
         }
 
     }
+
+    public synchronized List<Map<String, Object>> getAutomaticBackupHistory() {
+    return new ArrayList<>(automaticBackupHistory);
+}
 }

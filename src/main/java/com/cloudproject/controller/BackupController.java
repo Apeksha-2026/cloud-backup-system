@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+import com.cloudproject.service.AutomaticBackupService;
 
 @RestController
 @RequestMapping("/api")
@@ -13,10 +14,15 @@ import java.util.Map;
 public class BackupController {
 
     private final BackupService backupService;
+private final AutomaticBackupService automaticBackupService;
 
-    public BackupController(BackupService backupService) {
-        this.backupService = backupService;
-    }
+    public BackupController(
+        BackupService backupService,
+        AutomaticBackupService automaticBackupService
+) {
+    this.backupService = backupService;
+    this.automaticBackupService = automaticBackupService;
+}
 
     @PostMapping("/backup")
     public ResponseEntity<?> backupFiles(
@@ -68,4 +74,10 @@ public class BackupController {
                     );
         }
     }
+    @GetMapping("/automatic-backup-history")
+public ResponseEntity<?> getAutomaticBackupHistory() {
+    return ResponseEntity.ok(
+            automaticBackupService.getAutomaticBackupHistory()
+    );
+}
 }
