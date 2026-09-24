@@ -86,6 +86,10 @@ navButtons.forEach((button) => {
     const sectionName = button.dataset.section;
 
     openSection(sectionName);
+
+    if (sectionName === "history") {
+      loadAutomaticBackupHistory();
+    }
   });
 });
 
@@ -116,6 +120,9 @@ function openSection(sectionName) {
     pageTitle.textContent = pageInformation[sectionName].title;
 
     pageSubtitle.textContent = pageInformation[sectionName].subtitle;
+  }
+  if (sectionName === "history") {
+    loadAutomaticBackupHistory();
   }
 }
 
@@ -598,6 +605,44 @@ function updateAutomaticStatus() {
 }
 
 /* =========================================================
+   LOAD AUTOMATIC BACKUP HISTORY
+========================================================= */
+
+async function loadAutomaticBackupHistory() {
+  try {
+    const response = await fetch("/api/automatic-backup-history", {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error("Unable to load automatic backup history.");
+    }
+
+    const automaticBackups = await response.json();
+
+    automaticBackups.forEach((backup) => {
+      const alreadyExists = backups.some(
+        (existingBackup) => existingBackup.id === backup.id,
+      );
+
+      if (!alreadyExists) {
+        backups.unshift(backup);
+      }
+    });
+
+    saveBackupHistory();
+
+    renderBackupHistory();
+
+    updateDashboard();
+
+    console.log("Automatic backup history loaded:", automaticBackups);
+  } catch (error) {
+    console.error("Automatic backup history error:", error);
+  }
+}
+
+/* =========================================================
    BACKUP HISTORY
 ========================================================= */
 
@@ -1001,3 +1046,5 @@ loadSettingsPage();
 renderBackupHistory();
 
 updateDashboard();
+
+loadAutomaticBackupHistory();
