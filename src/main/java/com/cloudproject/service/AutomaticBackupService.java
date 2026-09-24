@@ -12,11 +12,21 @@ import java.util.List;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
 
 @Service
 public class AutomaticBackupService {
 
-    private final BackupService backupService;
+        private final BackupService backupService;
+
+        private final ObjectMapper objectMapper =
+                new ObjectMapper();
+
+        private final File historyFile =
+                new File("automatic-backup-history.json");
 
     private BackupSettings settings =
             new BackupSettings();
@@ -34,14 +44,16 @@ private final List<Map<String, Object>> automaticBackupHistory =
         new ArrayList<>();
 
 
-    public AutomaticBackupService(
-            BackupService backupService
-    ) {
+   public AutomaticBackupService(
+        BackupService backupService
+) {
 
-        this.backupService =
-                backupService;
+    this.backupService =
+            backupService;
 
-    }
+    loadAutomaticBackupHistory();
+
+}
 
 
     public synchronized void updateSettings(
@@ -223,6 +235,8 @@ private final List<Map<String, Object>> automaticBackupHistory =
 
                 automaticBackupHistory.add(historyItem);
 
+                saveAutomaticBackupHistory();
+
                 System.out.println(
                         "Automatically backed up: "
                                 + file
@@ -273,6 +287,8 @@ historyItem.put("status", "Backed Up");
 
 automaticBackupHistory.add(historyItem);
 
+saveAutomaticBackupHistory();
+
 System.out.println(
         "Automatically backed up modified file: "
                 + file
@@ -296,4 +312,54 @@ System.out.println(
     public synchronized List<Map<String, Object>> getAutomaticBackupHistory() {
     return new ArrayList<>(automaticBackupHistory);
 }
+
+private synchronized void saveAutomaticBackupHistory() {
+
+    try {
+
+        objectMapper.writerWithDefaultPrettyPrinter()
+                .writeValue(
+                        historyFile,
+                        automaticBackupHistory
+                );
+
+    } catch (IOException e) {
+
+        System.err.println(
+                "Could not save automatic backup history: "
+                        + e.getMessage()
+        );
+    }
+}
+
+
+private synchronized void loadAutomaticBackupHistory() {
+
+    if (!historyFile.exists()) {
+
+        return;
+
+    }
+
+    try {
+
+        List<Map<String, Object>> savedHistory =
+                objectMapper.readValue(
+                        historyFile,
+                        new TypeReference<List<Map<String, Object>>>() {}
+                );
+
+        automaticBackupHistory.clear();
+
+        automaticBackupHistory.addAll(savedHistory);
+
+    } catch (IOException e) {
+
+        System.err.println(
+                "Could not load automatic backup history: "
+                        + e.getMessage()
+        );
+    }
+}
+
 }
